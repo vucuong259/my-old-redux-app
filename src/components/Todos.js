@@ -1,10 +1,14 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {markComplete} from '../store/actions/todoActions'
+import {getTodos, markComplete, deleteTodo} from '../store/actions/todoActions'
 import TodoForm from './TodoForm';
 
-const Todos = ({todos, markComplete}) => {
+const Todos = ({todos, getTodos, markComplete, deleteTodo}) => {
+    useEffect(() => {
+        getTodos()
+    }, [])
+
     return (
         <div className="todo-list">
             <TodoForm/>
@@ -14,7 +18,7 @@ const Todos = ({todos, markComplete}) => {
                         <li key={todo.id} className={todo.completed? 'completed': ''}>
                             {todo.title}
                             <input type="checkbox" onChange={markComplete.bind(this, todo.id)} />
-                            <button>Delete</button>
+                            <button onClick={deleteTodo.bind(this, todo.id)}>Delete</button>
                         </li>
                     ))
                 }
@@ -25,11 +29,13 @@ const Todos = ({todos, markComplete}) => {
 
 Todos.propTypes = {
     todos: PropTypes.array.isRequired,
-    markComplete: PropTypes.func.isRequired
+    markComplete: PropTypes.func.isRequired,
+    deleteTodo: PropTypes.func.isRequired,
+    getTodos: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
     todos: state.myTodos.todos
 })
 
-export default connect(mapStateToProps, {markComplete})(Todos)
+export default connect(mapStateToProps, {getTodos, markComplete, deleteTodo})(Todos)
